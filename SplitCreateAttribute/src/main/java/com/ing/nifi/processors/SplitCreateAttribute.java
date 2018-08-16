@@ -22,7 +22,7 @@ import org.apache.nifi.processor.util.StandardValidators;
 
 @SideEffectFree
 @Tags({"split attribute", "split"})
-@CapabilityDescription("Split And Create New Attribute.")
+@CapabilityDescription("Split and Create New Attribute.")
 public class SplitCreateAttribute extends AbstractProcessor {
 	
 	private static String SPLITNAMESEPERATOR = "[,]";
@@ -33,34 +33,34 @@ public class SplitCreateAttribute extends AbstractProcessor {
 	private List<PropertyDescriptor> properties;
 	
 	public static final PropertyDescriptor SEPERATOR = new PropertyDescriptor.Builder()
-    .name("Split Separator")
-    .required(true)
-    .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-    .build();
+        .name("Split Separator (Regex)")
+        .required(true)
+        .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+        .build();
 	
 	public static final PropertyDescriptor ATTRBUTENAME = new PropertyDescriptor.Builder()
-    .name("Split Attribute Name")
-    .required(true)
-    .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-    .build();
+        .name("Attribute Name Which Split")
+        .required(true)
+        .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+        .build();
 	
 	public static final PropertyDescriptor SPLITVALUESNAME = new PropertyDescriptor.Builder()
-    .name("Split Values Names")
-    .description("It's should be a string seperate with , (Example: name1,name2,name3)")
-    .required(true)
-    .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-    .build();
+        .name("Split Attributes Names")
+        .description("It's should be a string seperate with , (Example: name1,name2,name3)")
+        .required(true)
+        .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+        .build();
 	
 	
 	public static final Relationship SUCCESS = new Relationship.Builder()
-    .name("success")
-    .description("Succes relationship")
-    .build();
+        .name("success")
+        .description("Succes relationship")
+        .build();
 
 	public static final Relationship FAIL = new Relationship.Builder()
-	.name("fail")
-	.description("Fail relationship.")
-	.build();
+        .name("fail")
+        .description("Fail relationship.")
+        .build();
 	
 	
 	@Override
@@ -79,7 +79,7 @@ public class SplitCreateAttribute extends AbstractProcessor {
 	    relationships.add(FAIL);
 	    this.relationships = Collections.unmodifiableSet(relationships);
 	    
-	    log.info("-------------Init OK-------------");
+	    log.info("-------------Split and Create Attribute Init OK-------------");
 	}
 	
 	@Override
@@ -100,13 +100,13 @@ public class SplitCreateAttribute extends AbstractProcessor {
 		}
 		
 		if (attributeValue == null){
-			log.error("Attribute is not valid!");
+			log.error("Attribute dont found!");
 			session.transfer(flowfile, FAIL);
 			return;
 		}
 		
 		splitNames = splitvaluesname.split(SPLITNAMESEPERATOR, -1);
-		attributeSplitValues = attributeValue.split("\\" + seperator, -1);
+		attributeSplitValues = attributeValue.split(seperator, -1);
 		
 		if (splitNames.length == attributeSplitValues.length){
 			for (int i = 0; i < attributeSplitValues.length; i++){
@@ -116,7 +116,7 @@ public class SplitCreateAttribute extends AbstractProcessor {
 			}
 		}
 		else{
-			log.error("Split count is not valid!");
+			log.error("Split values and attributes count is not equal!");
 			session.transfer(flowfile, FAIL);
 			return;
 		}
