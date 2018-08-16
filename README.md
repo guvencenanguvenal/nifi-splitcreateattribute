@@ -35,7 +35,7 @@ Example: ATTRIBUTE1, ATTRIBUTE2, ATTRIBUTE3
  - Your seperator should be "\\|" because it's a regex.
  - And then your split attributes name should be like "Name1, Name2, Name3"
  
- **if your attribute name count is not equal your spliting data count, processor will has an error.
+ **if your attribute name count is not equal your spliting data count, processor will has an error.**
 
  
 
