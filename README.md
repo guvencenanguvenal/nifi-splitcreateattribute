@@ -4,7 +4,7 @@ Apache Nifi Split Attribute and than Create New Attribute With Split Values
 
 # Get Started! :sunglasses:
 
-Download [stable version](https://github.com/guvencenanguvenal/nifi-parsejsonattribute/releases/tag/stable).
+Download [stable version](https://github.com/guvencenanguvenal/nifi-splitcreateattribute/releases/tag/stable).
 
 Build project 
 
