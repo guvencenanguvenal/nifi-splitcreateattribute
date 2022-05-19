@@ -1,4 +1,4 @@
-package com.ing.nifi.processors;
+package com.gcg.nifi.processors;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,31 +22,31 @@ import org.apache.nifi.processor.util.StandardValidators;
 
 @SideEffectFree
 @Tags({"split attribute", "split"})
-@CapabilityDescription("Split and Create New Attribute.")
+@CapabilityDescription("Split existing attribute and create new attribute with split values.")
 public class SplitCreateAttribute extends AbstractProcessor {
 	
-	private static String SPLITNAMESEPERATOR = "[,]";
+	private static String SPLIT_NAME_SEPARATOR = "[,]";
 	
 	private static ComponentLog log;
 	
 	private Set<Relationship> relationships;
 	private List<PropertyDescriptor> properties;
 	
-	public static final PropertyDescriptor SEPERATOR = new PropertyDescriptor.Builder()
+	public static final PropertyDescriptor SEPARATOR = new PropertyDescriptor.Builder()
         .name("Split Separator (Regex)")
         .required(true)
         .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
         .build();
 	
-	public static final PropertyDescriptor ATTRBUTENAME = new PropertyDescriptor.Builder()
-        .name("Attribute Name Which Split")
+	public static final PropertyDescriptor ATTRIBUTE_NAME = new PropertyDescriptor.Builder()
+        .name("Attribute Name to be Split")
         .required(true)
         .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
         .build();
 	
-	public static final PropertyDescriptor SPLITVALUESNAME = new PropertyDescriptor.Builder()
+	public static final PropertyDescriptor SPLIT_VALUES_NAME = new PropertyDescriptor.Builder()
         .name("Split Attributes Names")
-        .description("It's should be a string seperate with , (Example: name1,name2,name3)")
+        .description("It's should be a string separate with , (Example: name1,name2,name3)")
         .required(true)
         .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
         .build();
@@ -54,7 +54,7 @@ public class SplitCreateAttribute extends AbstractProcessor {
 	
 	public static final Relationship SUCCESS = new Relationship.Builder()
         .name("success")
-        .description("Succes relationship")
+        .description("Success relationship")
         .build();
 
 	public static final Relationship FAIL = new Relationship.Builder()
@@ -68,13 +68,13 @@ public class SplitCreateAttribute extends AbstractProcessor {
 		
 		log = getLogger();
 		
-		List<PropertyDescriptor> properties = new ArrayList<>();
-	    properties.add(SPLITVALUESNAME);
-	    properties.add(ATTRBUTENAME);
-	    properties.add(SEPERATOR);
-	    this.properties = Collections.unmodifiableList(properties);
+		List<PropertyDescriptor> properties = new ArrayList();
+		properties.add(SEPARATOR);
+		properties.add(ATTRIBUTE_NAME);
+		properties.add(SPLIT_VALUES_NAME);
+		this.properties = Collections.unmodifiableList(properties);
 		
-	    Set<Relationship> relationships = new HashSet<>();
+	    Set<Relationship> relationships = new HashSet();
 	    relationships.add(SUCCESS);
 	    relationships.add(FAIL);
 	    this.relationships = Collections.unmodifiableSet(relationships);
@@ -88,25 +88,25 @@ public class SplitCreateAttribute extends AbstractProcessor {
 		
 		FlowFile flowfile = session.get();
 		
-		String seperator = context.getProperty(SEPERATOR).getValue();
-		String attributeValue = flowfile.getAttribute(context.getProperty(ATTRBUTENAME).getValue());
-		String splitvaluesname = context.getProperty(SPLITVALUESNAME).getValue();
+		String separator = context.getProperty(SEPARATOR).getValue();
+		String attributeValue = flowfile.getAttribute(context.getProperty(ATTRIBUTE_NAME).getValue());
+		String splitValuesName = context.getProperty(SPLIT_VALUES_NAME).getValue();
 		String[] splitNames, attributeSplitValues;
 		
-		if (seperator.isEmpty()){
+		if (separator.isEmpty()){
 			log.error("Separator is empty");
 			session.transfer(flowfile, FAIL);
 			return;
 		}
 		
 		if (attributeValue == null){
-			log.error("Attribute dont found!");
+			log.error("Attribute is not found!");
 			session.transfer(flowfile, FAIL);
 			return;
 		}
 		
-		splitNames = splitvaluesname.split(SPLITNAMESEPERATOR, -1);
-		attributeSplitValues = attributeValue.split(seperator, -1);
+		splitNames = splitValuesName.split(SPLIT_NAME_SEPARATOR, -1);
+		attributeSplitValues = attributeValue.split(separator, -1);
 		
 		if (splitNames.length == attributeSplitValues.length){
 			for (int i = 0; i < attributeSplitValues.length; i++){
@@ -120,9 +120,7 @@ public class SplitCreateAttribute extends AbstractProcessor {
 			session.transfer(flowfile, FAIL);
 			return;
 		}
-		
 		session.transfer(flowfile, SUCCESS);
-	
 	}
 	
 	/*
