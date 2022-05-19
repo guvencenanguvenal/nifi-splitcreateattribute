@@ -6,7 +6,7 @@
   <packaging>nar</packaging>
   
   <name>SplitCreateAttribute</name>
-  <description>SplitCreateAttribute</description>
+  <description>Split Existing Attribute and Create New Attribute</description>
   
   <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
